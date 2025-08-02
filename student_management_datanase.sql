@@ -80,6 +80,15 @@ JOIN Courses c ON c.course_id = e.course_id
 WHERE (e.course_id, e.enroll_date) IN (
     SELECT course_id, MAX(enroll_date)
     FROM Enrollments
+     GROUP BY course_id
+);
+
+--order by an enrolleent 
+SELECT c.course_name, COUNT(*) AS total_enrollments
+FROM Enrollments e
+JOIN Courses c ON c.course_id = e.course_id
+GROUP BY c.course_name
+ORDER BY total_enrollments DESC;
     
 
 
