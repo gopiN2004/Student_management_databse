@@ -66,6 +66,22 @@ JOIN Students s ON e.student_id = s.student_id
 GROUP BY s.name
 HAVING course_count > 1;
 
+-- Query 5: Number of students in each course
+SELECT c.course_name, COUNT(*) AS total_students
+FROM Enrollments e
+JOIN Courses c ON e.course_id = c.course_id
+GROUP BY c.course_name;
+
+-- Query 6: Latest enrolled student in each course
+SELECT s.name, c.course_name, e.enroll_date
+FROM Enrollments e
+JOIN Students s ON s.student_id = e.student_id
+JOIN Courses c ON c.course_id = e.course_id
+WHERE (e.course_id, e.enroll_date) IN (
+    SELECT course_id, MAX(enroll_date)
+    FROM Enrollments
+    
+
 
 
 
