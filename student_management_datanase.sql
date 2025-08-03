@@ -89,6 +89,64 @@ FROM Enrollments e
 JOIN Courses c ON c.course_id = e.course_id
 GROUP BY c.course_name
 ORDER BY total_enrollments DESC;
+
+-- Task 1: List all students with the number of courses they enrolled in
+SELECT s.name, COUNT(*) AS total_courses
+FROM enrollement e
+JOIN students s ON s.student_id = e.student_id
+GROUP BY s.name;
+
+-- Task 2: Show courses with no students enrolled
+SELECT c.course_name
+FROM courses c
+LEFT JOIN enrollement e ON c.course_id = e.course_id
+WHERE e.course_id IS NULL;
+
+-- Task 3: Students who enrolled in more than 1 course
+SELECT s.name, COUNT(*) AS total_enrollments
+FROM enrollement e
+JOIN students s ON s.student_id = e.student_id
+GROUP BY s.name
+HAVING COUNT(*) > 1;
+
+-- Task 4: First student who enrolled in each course
+SELECT c.course_name, s.name, e.enroll_date
+FROM enrollement e
+JOIN students s ON s.student_id = e.student_id
+JOIN courses c ON c.course_id = e.course_id
+WHERE (c.course_id, e.enroll_date) IN (
+    SELECT course_id, MIN(enroll_date)
+    FROM enrollement
+    GROUP BY course_id
+);
+
+-- Task 5: Course-wise latest enrolled student
+SELECT s.name, c.course_name, e.enroll_date
+FROM enrollement e
+JOIN students s ON s.student_id = e.student_id
+JOIN courses c ON c.course_id = e.course_id
+WHERE (c.course_id, e.enroll_date) IN (
+    SELECT course_id, MAX(enroll_date)
+    FROM enrollement
+    GROUP BY course_id
+);
+
+-- Task 6: Students who enrolled in all available courses
+SELECT s.name
+FROM students s
+JOIN enrollement e ON s.student_id = e.student_id
+GROUP BY s.student_id
+HAVING COUNT(DISTINCT e.course_id) = (SELECT COUNT(*) FROM courses);
+
+-- Task 7: Average number of students per course
+SELECT AVG(student_count) AS avg_students_per_course
+FROM (
+    SELECT COUNT(DISTINCT student_id) AS student_count
+    FROM enrollement
+    GROUP BY course_id
+) AS sub;
+
+
     
 
 
